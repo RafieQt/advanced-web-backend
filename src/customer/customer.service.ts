@@ -2,15 +2,15 @@ import { Injectable } from '@nestjs/common';
 import { CustomerDTO } from './customer.dto';
 @Injectable()
 export class CustomerService {
-  getAllProducts(): object {
-    return { message: 'all products' };
+  getAllUsers(): object {
+    return { message: 'all users' };
   }
 
-  searchCustomer(name: string, age: number): object {
-    return { name: name, age: age, result: 'search active' };
+  searchCustomer(name: string): object {
+    return { name: name, result: 'search active' };
   }
 
-  getById(id: number): object {
+  getById(id: string): object {
     return { id: id, status: 'found' };
   }
 
@@ -18,15 +18,15 @@ export class CustomerService {
     return { data, message: 'customer created' };
   }
 
-  update(id: number, data: CustomerDTO): object {
+  update(id: string, data: CustomerDTO): object {
     return { id: id, updatedData: data, message: 'customer fully updated' };
   }
 
-  partialUpdate(id: number, data: CustomerDTO): object {
+  partialUpdate(id: string, data: CustomerDTO): object {
     return { id: id, partialData: data, message: 'customer patched' };
   }
 
-  delete(id: number): object {
+  delete(id: string): object {
     return { id: id, message: 'customer deleted' };
   }
 
