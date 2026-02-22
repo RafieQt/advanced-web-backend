@@ -37,7 +37,7 @@ export class CustomerController {
           cb(new MulterError('LIMIT_UNEXPECTED_FILE', 'image'), false);
         }
       },
-      limits: { fileSize: 30000 },
+      limits: { fileSize: 2000000 },
       storage: diskStorage({
         destination: './uploads',
         filename: function (req, file, cb) {
