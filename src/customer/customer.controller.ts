@@ -18,12 +18,30 @@ import { CustomerService } from './customer.service';
 import { CustomerDTO } from './customer.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage, MulterError } from 'multer';
+import { CustomerEntity } from './customer.entity';
 @Controller('customer')
 export class CustomerController {
   constructor(private readonly customerService: CustomerService) {}
 
-  @Get('allusers') getAll(): object {
-    return this.customerService.getAllUsers();
+  @Post('createuser')
+  createUser(@Body() customer: CustomerEntity) {
+    return this.customerService.createUser(customer);
+  }
+
+  @Get('search')
+  getUserByFullname(@Query('name') name: string) {
+    return this.customerService.getUserByFullname(name);
+  }
+
+  @Get(':username')
+  getByUsername(@Param('username') username: string) {
+    return this.customerService.getUserByUsername(username);
+  }
+
+  // delete user by username
+  @Delete('delete/:username')
+  deleteUser(@Param('username') username: string) {
+    return this.customerService.deleteUserByUsername(username);
   }
 
   //file upload
@@ -61,10 +79,6 @@ export class CustomerController {
     return this.customerService.getById(id);
   }
 
-  @Get('search') searchCustomer(@Query('name') name: string): object {
-    return this.customerService.searchCustomer(name);
-  }
-
   @Post('create') @UsePipes(new ValidationPipe()) createCustomer(
     @Body() data: CustomerDTO,
   ): object {
@@ -83,10 +97,6 @@ export class CustomerController {
     @Body() data: CustomerDTO,
   ): object {
     return this.customerService.partialUpdate(id, data);
-  }
-
-  @Delete(':id') deleteCustomer(@Param('id') id: string): object {
-    return this.customerService.delete(id);
   }
 
   @Get('by-email') getByEmail(@Query('email') email: string): object {

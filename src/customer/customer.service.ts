@@ -1,13 +1,38 @@
 import { Injectable } from '@nestjs/common';
 import { CustomerDTO } from './customer.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { CustomerEntity } from './customer.entity';
+import { Like, Repository } from 'typeorm';
+
 @Injectable()
 export class CustomerService {
-  getAllUsers(): object {
-    return { message: 'all users' };
+  constructor(
+    @InjectRepository(CustomerEntity)
+    private customerRepository: Repository<CustomerEntity>,
+  ) {}
+
+  //create user
+  async createUser(customer: CustomerEntity): Promise<CustomerEntity> {
+    const newCustomer = this.customerRepository.create(customer);
+    return this.customerRepository.save(newCustomer);
   }
 
-  searchCustomer(name: string): object {
-    return { name: name, result: 'search active' };
+  //get users with fullname substring
+  async getUserByFullname(fullname: string): Promise<CustomerEntity[]> {
+    return this.customerRepository.find({
+      where: {
+        fullname: Like(`%${fullname}%`),
+      },
+    });
+  }
+  //get user by their username
+  async getUserByUsername(username: string): Promise<CustomerEntity | null> {
+    return this.customerRepository.findOneBy({ username });
+  }
+
+  //delete user by their username
+  async deleteUserByUsername(username: string): Promise<void> {
+    await this.customerRepository.delete({ username });
   }
 
   getById(id: string): object {
@@ -24,10 +49,6 @@ export class CustomerService {
 
   partialUpdate(id: string, data: CustomerDTO): object {
     return { id: id, partialData: data, message: 'customer patched' };
-  }
-
-  delete(id: string): object {
-    return { id: id, message: 'customer deleted' };
   }
 
   getByEmail(email: string): object {
