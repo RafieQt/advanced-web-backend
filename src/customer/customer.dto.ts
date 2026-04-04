@@ -1,22 +1,19 @@
-import { IsNotEmpty, IsString, Matches } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsString, MinLength } from 'class-validator';
 
 export class CustomerDTO {
-  @IsNotEmpty({ message: 'name is required' })
-  @Matches(/^[A-Za-z ]+$/, {
-    message: 'Name should contain only alphabets',
-  })
-  name: string;
+  @IsNotEmpty({ message: 'Username is required' })
+  @IsString()
+  username: string;
+
+  @IsNotEmpty({ message: 'Full name is required' })
+  @IsString()
+  fullname: string;
 
   @IsNotEmpty({ message: 'Email is required' })
-  @Matches(/^[^@]+@[^@]+\.xyz$/, {
-    message: 'Email must be in .xyz domain and contain @',
-  })
+  @IsEmail({}, { message: 'Invalid email format' })
   email: string;
 
-  @IsNotEmpty({ message: 'NID number is required' })
-  @IsString()
-  @Matches(/^\d{17}$/, {
-    message: 'ID must contain exactly 17 digits',
-  })
-  id: string;
+  @IsNotEmpty({ message: 'Password is required' })
+  @MinLength(6, { message: 'Password must be at least 6 characters' })
+  password: string;
 }

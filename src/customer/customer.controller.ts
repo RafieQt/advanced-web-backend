@@ -23,22 +23,26 @@ import { CustomerEntity } from './customer.entity';
 export class CustomerController {
   constructor(private readonly customerService: CustomerService) {}
 
-  @Post('createuser')
-  createUser(@Body() customer: CustomerEntity) {
-    return this.customerService.createUser(customer);
+  // create user (working)
+  @Post('create') @UsePipes(new ValidationPipe()) createUser(
+    @Body() data: CustomerDTO,
+  ): object {
+    return this.customerService.createUser(data);
   }
 
+  // get user customer by their full name "search?name="
   @Get('search')
   getUserByFullname(@Query('name') name: string) {
     return this.customerService.getUserByFullname(name);
   }
 
-  @Get(':username')
+  // get user by their username(working)
+  @Get('by-username/:username')
   getByUsername(@Param('username') username: string) {
     return this.customerService.getUserByUsername(username);
   }
 
-  // delete user by username
+  // delete user by username(working)
   @Delete('delete/:username')
   deleteUser(@Param('username') username: string) {
     return this.customerService.deleteUserByUsername(username);
@@ -75,31 +79,31 @@ export class CustomerController {
     res.sendFile(name, { root: './uploads' });
   }
 
+  // working
   @Get('user/:id') getCustomerById(@Param('id') id: string): object {
     return this.customerService.getById(id);
   }
 
-  @Post('create') @UsePipes(new ValidationPipe()) createCustomer(
-    @Body() data: CustomerDTO,
-  ): object {
-    return this.customerService.createCustomer(data);
-  }
-
-  @Put(':id') updateCustomer(
+  // updates user- working
+  @Put('update/:id')
+  async updateCustomer(
     @Param('id') id: string,
     @Body() data: CustomerDTO,
-  ): object {
+  ): Promise<object | null> {
     return this.customerService.update(id, data);
   }
 
-  @Patch(':id') partialUpdate(
-    @Param('id') id: string,
-    @Body() data: CustomerDTO,
-  ): object {
-    return this.customerService.partialUpdate(id, data);
+  // get customer by their mail
+  @Get('by-email') async getByEmail(
+    @Query('email') email: string,
+  ): Promise<CustomerEntity> {
+    return this.customerService.getByEmail(email);
   }
 
-  @Get('by-email') getByEmail(@Query('email') email: string): object {
-    return this.customerService.getByEmail(email);
+  @Patch('partial-update/:id') async partialUpdate(
+    @Param('id') id: string,
+    @Body() data: Partial<CustomerDTO>,
+  ): Promise<CustomerEntity | null> {
+    return this.customerService.partialUpdate(id, data);
   }
 }
