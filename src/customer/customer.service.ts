@@ -70,7 +70,7 @@ export class CustomerService {
   //   return { id: id, updatedData: data, message: 'customer fully updated' };
   // }
 
-  createCustomer(data: CustomerDTO): object {
-    return { data, message: 'customer created' };
+  async findOne(username: string): Promise<CustomerEntity | null> {
+    return this.customerRepository.findOneBy({ email: username });
   }
 }

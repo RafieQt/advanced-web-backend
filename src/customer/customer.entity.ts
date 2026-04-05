@@ -1,5 +1,5 @@
 import { BeforeInsert, Column, Entity, PrimaryColumn } from 'typeorm';
-
+import * as bcrypt from 'bcrypt';
 @Entity('customer')
 export class CustomerEntity {
   @PrimaryColumn()
@@ -16,7 +16,10 @@ export class CustomerEntity {
   @Column({ type: 'boolean', default: false })
   isActive: boolean;
   @BeforeInsert()
-  generateId() {
+  async generateId() {
     this.id = 'cust_' + Math.random().toString(36).substring(2, 10);
+
+    const salt = await bcrypt.genSalt();
+    this.password = await bcrypt.hash(this.password, salt);
   }
 }
