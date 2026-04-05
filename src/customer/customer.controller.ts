@@ -10,6 +10,7 @@ import {
   Query,
   Res,
   UploadedFile,
+  UseGuards,
   UseInterceptors,
   UsePipes,
   ValidationPipe,
@@ -19,6 +20,7 @@ import { CustomerDTO } from './customer.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage, MulterError } from 'multer';
 import { CustomerEntity } from './customer.entity';
+import { AuthGuard } from 'src/auth/auth.guard';
 @Controller('customer')
 export class CustomerController {
   constructor(private readonly customerService: CustomerService) {}
@@ -94,9 +96,9 @@ export class CustomerController {
   }
 
   // get customer by their mail
-  @Get('by-email') async getByEmail(
-    @Query('email') email: string,
-  ): Promise<CustomerEntity> {
+  @UseGuards(AuthGuard)
+  @Get('by-email')
+  async getByEmail(@Query('email') email: string): Promise<CustomerEntity> {
     return this.customerService.getByEmail(email);
   }
 
