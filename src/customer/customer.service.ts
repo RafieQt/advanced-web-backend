@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CustomerDTO } from './customer.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CustomerEntity } from './customer.entity';
@@ -19,6 +24,10 @@ export class CustomerService {
 
   //get users with fullname substring
   async getUserByFullname(fullname: string): Promise<CustomerEntity[]> {
+    const customer = await this.customerRepository.findOneBy({ fullname });
+    if (!customer) {
+      throw new HttpException('Customer not found', HttpStatus.NOT_FOUND);
+    }
     return this.customerRepository.find({
       where: {
         fullname: Like(`%${fullname}%`),
@@ -27,11 +36,19 @@ export class CustomerService {
   }
   //get user by their username
   async getUserByUsername(username: string): Promise<CustomerEntity | null> {
+    const customer = await this.customerRepository.findOneBy({ username });
+    if (!customer) {
+      throw new HttpException('Customer not found', HttpStatus.NOT_FOUND);
+    }
     return this.customerRepository.findOneBy({ username });
   }
 
   //delete user by their username
   async deleteUserByUsername(username: string): Promise<void> {
+    const customer = await this.customerRepository.findOneBy({ username });
+    if (!customer) {
+      throw new HttpException('Customer not found', HttpStatus.NOT_FOUND);
+    }
     await this.customerRepository.delete({ username });
   }
   // customer by their id
