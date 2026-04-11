@@ -1,5 +1,7 @@
-import { BeforeInsert, Column, Entity, PrimaryColumn } from 'typeorm';
+import { BeforeInsert, Column, Entity, OneToMany, OneToOne, PrimaryColumn } from 'typeorm';
 import * as bcrypt from 'bcrypt';
+import { OrderEntity } from 'src/order/order.entity';
+import { AddressEntity } from 'src/address/address.entity';
 @Entity('customer')
 export class CustomerEntity {
   @PrimaryColumn()
@@ -15,6 +17,13 @@ export class CustomerEntity {
   password: string;
   @Column({ type: 'boolean', default: false })
   isActive: boolean;
+
+  @OneToMany(() => OrderEntity, (order) => order.customer)
+  orders: OrderEntity[];
+
+  @OneToOne(() => AddressEntity, (address) => address.customer)
+  address: AddressEntity;
+
   @BeforeInsert()
   async generateId() {
     this.id = 'cust_' + Math.random().toString(36).substring(2, 10);

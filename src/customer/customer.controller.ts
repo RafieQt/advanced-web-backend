@@ -26,6 +26,12 @@ export class CustomerController {
   constructor(private readonly customerService: CustomerService) {}
 
   // create user (working)
+  //   {
+  //   "username": "Rafi",
+  //   "fullname": "Rafi Ahmed",
+  //   "email": "Rafi@ahmed.com",
+  //   "password": "123456"
+  // }
   @Post('create') @UsePipes(new ValidationPipe()) createUser(
     @Body() data: CustomerDTO,
   ): object {
