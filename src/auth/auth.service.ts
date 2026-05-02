@@ -10,8 +10,8 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async signIn(username: string, pass: string): Promise<any> {
-    const user = await this.customerService.findOne(username);
+  async signIn(email: string, pass: string): Promise<any> {
+    const user = await this.customerService.getByEmail(email);
 
     if (!user) {
       throw new UnauthorizedException('Invalid credentials');
@@ -23,7 +23,7 @@ export class AuthService {
     const { password, ...result } = user;
     // TODO: Generate a JWT and return it here
     // instead of the user object
-    const payload = { sub: user.id, username: user.email };
+    const payload = { sub: user.id, email: user.email };
     return {
       // 💡 Here the JWT secret key that's used for signing the payload
       // is the key that was passed in the JwtModule

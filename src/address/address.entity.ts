@@ -28,7 +28,7 @@ export class AddressEntity {
   country: string;
 
   @OneToOne(() => CustomerEntity, (customer) => customer.address, {
-    cascade: true,
+    onDelete: 'CASCADE',
   })
   @JoinColumn()
   customer: CustomerEntity;

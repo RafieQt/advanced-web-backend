@@ -25,7 +25,7 @@ export class OrderEntity {
   orderDate: Date;
 
   @ManyToOne(() => CustomerEntity, (customer) => customer.orders, {
-    cascade: true,
+    onDelete: 'CASCADE',
   })
   customer: CustomerEntity;
 }

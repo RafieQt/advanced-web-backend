@@ -1,6 +1,24 @@
-
-import { Body, Controller, Post, HttpCode, HttpStatus } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  HttpCode,
+  HttpStatus,
+  Res,
+  UseGuards,
+  Get,
+  Req,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
+import type { Response, Request } from 'express';
+import { AuthGuard } from './auth.guard';
+
+type AuthRequest = Request & {
+  user: {
+    sub: string;
+    email: string;
+  };
+};
 
 @Controller('auth')
 export class AuthController {
@@ -8,7 +26,26 @@ export class AuthController {
 
   @HttpCode(HttpStatus.OK)
   @Post('login')
-  signIn(@Body() signInDto: Record<string, any>) {
-    return this.authService.signIn(signInDto.username, signInDto.password);
+  async signIn(
+    @Body() signInDto: Record<string, any>,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const result = await this.authService.signIn(
+      signInDto.email,
+      signInDto.password,
+    );
+    res.cookie('access_token', result.access_token, {
+      httpOnly: true,
+      secure: false,
+      sameSite: 'lax',
+      path: '/',
+    });
+    return { message: 'Login successful' };
+  }
+
+  @UseGuards(AuthGuard)
+  @Get('me')
+  getProfile(@Req() req: AuthRequest) {
+    return req.user;
   }
 }

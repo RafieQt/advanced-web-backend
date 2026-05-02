@@ -21,14 +21,14 @@ export class AddressController {
   constructor(private readonly addressService: AddressService) {}
 
   // Create address
-//   {
-//   "street": "123 Kuril",
-//   "city": "Dhaka",
-//   "state": "Dhaka Division",
-//   "zipCode": "1000",
-//   "country": "Bangladesh",
-//   "customerId": "cust_abc123"
-// }
+  //   {
+  //   "street": "123 Kuril",
+  //   "city": "Dhaka",
+  //   "state": "Dhaka Division",
+  //   "zipCode": "1000",
+  //   "country": "Bangladesh",
+  //   "customerId": "cust_abc123"
+  // }
   @Post('create')
   @UsePipes(new ValidationPipe())
   createAddress(@Body() addressData: AddressDTO) {
