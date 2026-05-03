@@ -8,6 +8,9 @@ import { CustomerDTO } from './customer.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CustomerEntity } from './customer.entity';
 import { Like, Repository } from 'typeorm';
+import * as bcrypt from 'bcrypt';
+
+const SALT_ROUNDS = 10;
 
 @Injectable()
 export class CustomerService {
@@ -76,12 +79,21 @@ export class CustomerService {
     id: string,
     data: Partial<CustomerDTO>,
   ): Promise<CustomerEntity | null> {
-    const customer = await this.customerRepository.findOneBy({ id: id });
+    const customer = await this.customerRepository.findOneBy({ id });
 
-    if (!customer) throw new NotFoundException(`Customer ${id} not found`);
+    if (!customer) {
+      throw new NotFoundException(`Customer ${id} not found`);
+    }
 
-    await this.customerRepository.update(id, data);
-    return this.customerRepository.findOneBy({ id });
+    delete data.email;
+
+    if (data.password) {
+      data.password = await bcrypt.hash(data.password, SALT_ROUNDS);
+    }
+
+    Object.assign(customer, data);
+
+    return this.customerRepository.save(customer);
   }
   // update(id: string, data: CustomerDTO): object {
   //   return { id: id, updatedData: data, message: 'customer fully updated' };
