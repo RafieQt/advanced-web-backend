@@ -46,6 +46,17 @@ export class AuthController {
   @UseGuards(AuthGuard)
   @Get('me')
   getProfile(@Req() req: AuthRequest) {
-    return req.user;
+    return this.authService.getFullUser(req.user.email);
+  }
+
+  @Post('logout')
+  logout(@Res({ passthrough: true }) res: Response) {
+    res.clearCookie('access_token', {
+      httpOnly: true,
+      sameSite: 'lax',
+      path: '/',
+    });
+
+    return { message: 'Logged out successfully' };
   }
 }
